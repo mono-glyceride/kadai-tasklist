@@ -11,13 +11,22 @@ class TasksController extends Controller
     // getでtasks/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
-        // メッセージ一覧を取得
-        $tasks = Task::all();
+        $data = [];
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // ユーザの投稿の一覧を作成日時の降順で取得
+            // （後のChapterで他ユーザの投稿も取得するように変更しますが、現時点ではこのユーザの投稿のみ取得します）
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
 
-        // メッセージ一覧ビューでそれを表示
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+        }
+
+        // Welcomeビューでそれらを表示
+        return view('welcome', $data);
     }
 
     // getでtasks/createにアクセスされた場合の「新規登録画面表示処理」
@@ -41,11 +50,20 @@ class TasksController extends Controller
         ]);
         
         // タスクを作成
-        $task = new task;
-        $task->status = $request->status;    // 追加
-        $task->content = $request->content;
-        $task->save();
-
+        //$task = new task;
+        //$task->status = $request->status;    // 追加
+        //$task->content = $request->content;
+        //$task->save();
+        
+        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+            'status' => $request->status,
+        ]);
+        
+        // 前のURLへリダイレクトさせる
+        //return back();
+        
         // トップページへリダイレクトさせる
         return redirect('/');
     }
@@ -55,7 +73,15 @@ class TasksController extends Controller
     {
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
+        
+        // 関係するモデルの件数をロード
+        //$user->loadRelationshipCounts();
+        
+        // ユーザの投稿一覧を作成日時の降順で取得
+        //$microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(10);
 
+        
+        
         // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
@@ -99,8 +125,13 @@ class TasksController extends Controller
     {
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
+        
         // タスクを削除
-        $task->delete();
+        //$task->delete();
+        
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+        }
 
         // タスクへリダイレクトさせる
         return redirect('/');

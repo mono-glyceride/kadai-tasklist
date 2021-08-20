@@ -32,17 +32,25 @@ class TasksController extends Controller
     // getでtasks/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
     {
+        if (\Auth::check()) {// 認証済みの場合
         $task = new task;
 
         // メッセージ作成ビューを表示
         return view('tasks.create', [
             'task' => $task,
         ]);
+        }
+        else{
+            return view('welcome', $data);
+        }
     }
 
     // postでtasks/にアクセスされた場合の「新規登録処理」
     public function store(Request $request)
     {
+        
+        if (\Auth::check()) {// 認証済みの場合
+        
         // バリデーション
         $request->validate([
             'status' => 'required|max:10',   // 追加
@@ -66,11 +74,18 @@ class TasksController extends Controller
         
         // トップページへリダイレクトさせる
         return redirect('/');
+        }
+        else{
+            return view('welcome', $data);
+        }
     }
 
     // getでtasks/（任意のid）にアクセスされた場合の「取得表示処理」
     public function show($id)
     {
+        
+        if (\Auth::check()) {// 認証済みの場合
+        
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
         
@@ -86,11 +101,19 @@ class TasksController extends Controller
         return view('tasks.show', [
             'task' => $task,
         ]);
+        }
+        else{
+            return view('welcome', $data);
+        }
+        
     }
 
     // getでtasks/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
     public function edit($id)
     {
+        if (\Auth::check()) {// 認証済みの場合
+        
+        
         // idの値でメッセージを検索して取得
         $task = task::findOrFail($id);
 
@@ -98,11 +121,18 @@ class TasksController extends Controller
         return view('tasks.edit', [
             'task' => $task,
         ]);
+        
+        }
+        else{
+            return view('welcome', $data);
+        }
     }
 
     // putまたはpatchでtasks/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
+        
+        if (\Auth::check()) {// 認証済みの場合
         // バリデーション
         $request->validate([
             'status' => 'required|max:10',   // 追加
@@ -118,11 +148,19 @@ class TasksController extends Controller
 
         // トップページへリダイレクトさせる
         return redirect('/');
+        }
+        
+        else{
+            return view('welcome', $data);
+        }
+        
     }
 
     // deleteでtasks/（任意のid）にアクセスされた場合の「削除処理」
     public function destroy($id)
     {
+        if (\Auth::check()) {// 認証済みの場合
+        
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
         
@@ -135,5 +173,11 @@ class TasksController extends Controller
 
         // タスクへリダイレクトさせる
         return redirect('/');
+        }
+        
+        else{
+            return view('welcome', $data);
+        }
+        
     }
 }

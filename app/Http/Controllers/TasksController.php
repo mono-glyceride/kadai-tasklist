@@ -32,25 +32,17 @@ class TasksController extends Controller
     // getでtasks/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
     {
-        if (\Auth::check()) {// 認証済みの場合
         $task = new task;
 
         // メッセージ作成ビューを表示
         return view('tasks.create', [
             'task' => $task,
         ]);
-        }
-        else{
-            return redirect('/');
-        }
     }
 
     // postでtasks/にアクセスされた場合の「新規登録処理」
     public function store(Request $request)
     {
-        
-        if (\Auth::check()) {// 認証済みの場合
-        
         // バリデーション
         $request->validate([
             'status' => 'required|max:10',   // 追加
@@ -74,18 +66,11 @@ class TasksController extends Controller
         
         // トップページへリダイレクトさせる
         return redirect('/');
-        }
-        else{
-            return redirect('/');
-        }
     }
 
     // getでtasks/（任意のid）にアクセスされた場合の「取得表示処理」
     public function show($id)
     {
-        
-        if (\Auth::check()) {// 認証済みの場合
-        
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
         
@@ -96,43 +81,41 @@ class TasksController extends Controller
         //$microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(10);
 
         
-        
+        if (\Auth::id() === $task->user_id) {
         // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
         ]);
         }
         else{
-            return view('welcome');
+        // トップページへリダイレクトさせる
+        return redirect('/');
         }
-        
     }
 
     // getでtasks/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
     public function edit($id)
     {
-        if (\Auth::check()) {// 認証済みの場合
-        
-        
         // idの値でメッセージを検索して取得
         $task = task::findOrFail($id);
 
+        if (\Auth::id() === $task->user_id) {
         // メッセージ編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
+        }
         
-        }
         else{
-            return redirect('/');
+        // トップページへリダイレクトさせる
+        return redirect('/');
         }
+        
     }
 
     // putまたはpatchでtasks/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
-        
-        if (\Auth::check()) {// 認証済みの場合
         // バリデーション
         $request->validate([
             'status' => 'required|max:10',   // 追加
@@ -141,26 +124,21 @@ class TasksController extends Controller
         
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
+        
         // タスクを更新
+       if (\Auth::id() === $task->user_id) {
         $task->content = $request->content;
         $task->status = $request->status;    // 追加
         $task->save();
+       }
 
         // トップページへリダイレクトさせる
         return redirect('/');
-        }
-        
-        else{
-            return redirect('/');
-        }
-        
     }
 
     // deleteでtasks/（任意のid）にアクセスされた場合の「削除処理」
     public function destroy($id)
     {
-        if (\Auth::check()) {// 認証済みの場合
-        
         // idの値でタスクを検索して取得
         $task = task::findOrFail($id);
         
@@ -173,11 +151,5 @@ class TasksController extends Controller
 
         // タスクへリダイレクトさせる
         return redirect('/');
-        }
-        
-        else{
-            return redirect('/');
-        }
-        
     }
 }

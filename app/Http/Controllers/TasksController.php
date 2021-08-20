@@ -72,7 +72,7 @@ class TasksController extends Controller
     public function show($id)
     {
         // idの値でタスクを検索して取得
-        $task = task::findOrFail($id);
+        $task = Task::findOrFail($id);
         
         // 関係するモデルの件数をロード
         //$user->loadRelationshipCounts();
@@ -97,7 +97,7 @@ class TasksController extends Controller
     public function edit($id)
     {
         // idの値でメッセージを検索して取得
-        $task = task::findOrFail($id);
+        $task = Task::findOrFail($id);
 
         if (\Auth::id() === $task->user_id) {
         // メッセージ編集ビューでそれを表示
@@ -123,7 +123,7 @@ class TasksController extends Controller
         ]);
         
         // idの値でタスクを検索して取得
-        $task = task::findOrFail($id);
+        $task = Task::findOrFail($id);
         
         // タスクを更新
        if (\Auth::id() === $task->user_id) {
@@ -140,7 +140,7 @@ class TasksController extends Controller
     public function destroy($id)
     {
         // idの値でタスクを検索して取得
-        $task = task::findOrFail($id);
+        $task = Task::findOrFail($id);
         
         // タスクを削除
         //$task->delete();

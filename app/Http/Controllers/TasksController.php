@@ -41,7 +41,7 @@ class TasksController extends Controller
         ]);
         }
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
     }
 
@@ -76,7 +76,7 @@ class TasksController extends Controller
         return redirect('/');
         }
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
     }
 
@@ -103,7 +103,7 @@ class TasksController extends Controller
         ]);
         }
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
         
     }
@@ -124,7 +124,7 @@ class TasksController extends Controller
         
         }
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
     }
 
@@ -151,7 +151,7 @@ class TasksController extends Controller
         }
         
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
         
     }
@@ -176,7 +176,7 @@ class TasksController extends Controller
         }
         
         else{
-            return view('welcome', $data);
+            return view('welcome');
         }
         
     }
